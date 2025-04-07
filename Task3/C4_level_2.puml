@@ -1,0 +1,39 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+' === Контейнеры системы
+System_Boundary(s1, "Цифровая платформа банка «Стандарт»") {
+
+    Container(webClient, "Интернет-банк (Web-клиент)", "ASP.NET MVC", "Интерфейс для подачи заявок клиентами")
+    Container(backend, "Интернет-банк (Backend)", ".NET Framework", "Обрабатывает логику подачи заявок и взаимодействия")
+    Container(apiBuffer, "Буфер заявок", "REST API + MS SQL", "Промежуточный сервис между ИБ и АБС")
+    Container(abs, "АБС", "Oracle + PL/SQL", "Финансовый учёт, открытие депозитов, ставки")
+    Container(rateStorage, "Хранилище ставок", "MS SQL или в АБС", "Персональные и актуальные ставки по депозитам")
+    Container(callCenter, "Система кол-центра", "React + Spring Boot", "Обработка входящих заявок с сайта")
+    Container(smsGateway, "СМС-шлюз", "HTTP API", "Отправка уведомлений клиентам")
+}
+
+' === Внешние акторы
+Person(customer, "Клиент", "Подаёт заявку, получает уведомления")
+Person(backOffice, "Менеджер бэк-офиса", "Обрабатывает заявки в АБС")
+Person(callCenterAgent, "Оператор кол-центра", "Работает с заявками с сайта")
+
+' === Взаимодействия
+Rel(customer, webClient, "Подаёт заявку через интернет-банк")
+Rel(webClient, backend, "Обработка заявки")
+Rel(backend, apiBuffer, "Передаёт заявку")
+Rel(apiBuffer, abs, "Создаёт запись заявки")
+Rel(backend, smsGateway, "Запрашивает отправку СМС")
+Rel(abs, smsGateway, "Инициирует СМС по событиям")
+
+Rel(backOffice, abs, "Обрабатывает заявки вручную")
+Rel(customer, smsGateway, "Получает уведомление")
+
+Rel(callCenterAgent, callCenter, "Обрабатывает заявки с сайта")
+Rel(callCenter, abs, "Передаёт заявки в АБС")
+Rel(callCenter, smsGateway, "Инициирует СМС при звонке")
+
+SHOW_LEGEND()
+@enduml

@@ -1,0 +1,29 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+' === Внешние пользователи
+Person(customer, "Клиенты", "Новые и существующие клиенты")
+Person(callCenterAgent, "Менеджеры кол-центра", "Обрабатывают заявки и звонки")
+Person(backOffice, "Менеджеры бэк-офиса", "Оформляют депозиты вручную")
+Person(frontOffice, "Менеджеры фронт-офиса", "Проводят идентификацию клиентов в отделении")
+
+' === Наша система как единый чёрный ящик
+System(systemUnderConsideration, "Цифровая платформа банка «Стандарт»", "Обрабатывает онлайн-заявки на депозиты через интернет-банк и сайт")
+
+' === Внешние системы
+System_Ext(telco, "Телеком-оператор", "Передаёт СМС клиентам")
+System_Ext(partnerCC, "Партнёрский колл-центр", "Обрабатывает звонки по заявкам")
+
+' === Связи
+Rel(customer, systemUnderConsideration, "Подаёт заявку на депозит")
+Rel(systemUnderConsideration, telco, "Отправляет СМС-уведомления")
+Rel(systemUnderConsideration, partnerCC, "Передаёт заявки для обработки по скриптам")
+
+Rel(callCenterAgent, systemUnderConsideration, "Работает с заявками клиентов")
+Rel(backOffice, systemUnderConsideration, "Обрабатывает заявки и открывает депозиты")
+Rel(frontOffice, systemUnderConsideration, "Проводит идентификацию клиентов в отделении")
+
+SHOW_LEGEND()
+@enduml

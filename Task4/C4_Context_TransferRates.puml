@@ -1,0 +1,25 @@
+
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+' === Акторы
+Person(callCenterAgent, "Оператор кол-центра", "Консультирует клиентов по ставкам")
+Person(partnerCallCenter, "Партнёрский кол-центр", "Получает файл ставок и консультирует клиентов")
+Person(depositManager, "Менеджер депозитов", "Обновляет ставки в системе")
+
+' === Наша система (единый чёрный ящик)
+System(systemUnderConsideration, "Цифровая платформа банка «Стандарт»", "Система, обрабатывающая ставки и передающая их кол-центрам")
+
+' === Внешние системы
+System_Ext(partnerSystem, "Информационная система партнёрского колл-центра", "Импортирует файл ставок")
+
+' === Взаимодействия
+Rel(depositManager, systemUnderConsideration, "Обновляет и сохраняет ставки")
+Rel(systemUnderConsideration, callCenterAgent, "Предоставляет доступ к актуальным ставкам")
+Rel(systemUnderConsideration, partnerSystem, "Передаёт файл со ставками")
+Rel(partnerSystem, partnerCallCenter, "Обеспечивает доступ к ставкам для операторов")
+
+SHOW_LEGEND()
+@enduml
