@@ -1,0 +1,28 @@
+
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+System_Boundary(s1, "Цифровая платформа банка «Стандарт»") {
+
+    Container(ratesModule, "Модуль ставок", "Oracle + PL/SQL", "Является частью АБС. Управление актуальными ставками по депозитам")
+    Container(exporter, "Экспорт ставок", "Скрипт/сервис", "Генерация файла ставок (CSV)")
+    Container(internalCallCenter, "Система кол-центра", "React + Spring Boot", "Доступ к ставкам для операторов")
+}
+
+System_Ext(partnerSystem, "Информационная система партнёрского колл-центра", "Импортирует CSV-файлы")
+
+Person(operator, "Оператор внутреннего кол-центра", "Консультирует клиентов по ставкам")
+Person(partnerOperator, "Оператор партнёрского кол-центра", "Работает с файлами ставок")
+Person(depositManager, "Менеджер депозитов", "Обновляет и публикует ставки")
+
+Rel(depositManager, ratesModule, "Редактирует и публикует ставки")
+Rel(ratesModule, internalCallCenter, "Предоставляет ставки через API или БД")
+Rel(ratesModule, exporter, "Передаёт данные для генерации файла")
+Rel(exporter, partnerSystem, "Отправляет файл ставок")
+Rel(operator, internalCallCenter, "Смотрит ставки в интерфейсе")
+Rel(partnerSystem, partnerOperator, "Позволяет открыть файл ставок")
+
+SHOW_LEGEND()
+@enduml
